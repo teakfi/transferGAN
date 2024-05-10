@@ -1,5 +1,5 @@
 """
-This file is directly taken from pix2pix/cycleGAN implementation from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
+This file is slightly modified from pix2pix/cycleGAN implementation from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
 """
 
 import torch
@@ -69,8 +69,8 @@ class Pix2PixModel(BaseModel):
             self.criterionGAN = networks.GANLoss(opt.gan_mode).to(self.device)
             self.criterionL1 = torch.nn.L1Loss()
             # initialize optimizers; schedulers will be automatically created by function <BaseModel.setup>.
-            self.optimizer_G = torch.optim.Adam(self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-            self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+            self.optimizer_G = torch.optim.Adam(self.netG.parameters(), lr=opt.lrG, betas=(opt.beta1G, 0.999)) # edited option for different lr and beta for D and G
+            self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=opt.lrD, betas=(opt.beta1D, 0.999)) # edited option for different lr and beta for D and G
             self.optimizers.append(self.optimizer_G)
             self.optimizers.append(self.optimizer_D)
 

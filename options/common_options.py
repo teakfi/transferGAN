@@ -56,10 +56,10 @@ class CommonOptions():
         parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
         # wandb parameters
         parser.add_argument('--use_wandb', action='store_true', help='if specified, then init wandb logging')
-        parser.add_argument('--wandb_project_name', type=str, default='CycleGAN-and-pix2pix', help='specify wandb project name')
+        parser.add_argument('--wandb_project_name', type=str, default='TransferGAN', help='specify wandb project name')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
 
-        
+
         return parser
 
     def gather_options(self):

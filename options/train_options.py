@@ -32,8 +32,10 @@ class TrainOptions(CommonOptions):
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
         parser.add_argument('--update_freq_D', type=int, default=1, help='how many iterations of data between updating discriminator')
         parser.add_argument('--update_freq_G', type=int, default=1, help='how many iterations of data between updating generator')
-        parser.add_argument('--beta1', type=float, default=0.5, help='momentum term of adam')
-        parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
+        parser.add_argument('--beta1D', type=float, default=0.5, help='momentum term of adam')
+        parser.add_argument('--lrD', type=float, default=0.0002, help='initial learning rate for adam')
+        parser.add_argument('--beta1G', type=float, default=0.5, help='momentum term of adam')
+        parser.add_argument('--lrG', type=float, default=0.0002, help='initial learning rate for adam')
         self.isTrain = True
         return parser
     
