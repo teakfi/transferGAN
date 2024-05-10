@@ -17,7 +17,7 @@ class CommonOptions():
         # run information
         parser.add_argument('--name', type=str, default='experiment', help='Name for the run, used in saving information')
         parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
-        
+
         # system information
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         
@@ -50,7 +50,16 @@ class CommonOptions():
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
    
-       
+        parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
+        parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')
+        parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
+        parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
+        # wandb parameters
+        parser.add_argument('--use_wandb', action='store_true', help='if specified, then init wandb logging')
+        parser.add_argument('--wandb_project_name', type=str, default='CycleGAN-and-pix2pix', help='specify wandb project name')
+        parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
+
+        
         return parser
 
     def gather_options(self):
