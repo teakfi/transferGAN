@@ -68,21 +68,21 @@ class AlignedDataset(BaseDataset):
         # split AB image into A and B
         w, h = AB.size
         
-        if self.opt.data_aligment in ['AB','BA']: 
+        if self.opt.data_alignment in ['AB','BA']: 
             w2 = int(w / 2)
             left = AB.crop((0, 0, w2, h))
             right = AB.crop((w2, 0, w, h))
-            if self.opt.data_aligment == 'AB':
+            if self.opt.data_alignment == 'AB':
                 A = left
                 B = right
             else:
                 A = right
                 B = left
-        elif self.opt.data_aligment in ['AoverB','BoverA']:
+        elif self.opt.data_alignment in ['AoverB','BoverA']:
             h2 = int(h / 2)          # tif combination merged images above each other...
             over = AB.crop((0,0,w,h2))
             under = AB.crop((0,h2,w,h))
-            if self.opt.data_aligment == 'AoverB':
+            if self.opt.data_alignment == 'AoverB':
                 A = over
                 B = under
             else:

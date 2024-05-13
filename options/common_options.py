@@ -1,4 +1,14 @@
+"""
+This file is based on the pix2pix/cycleGAN implementation from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
+"""
+
 import argparse
+import os
+from util import util
+import torch
+import models
+import data
+
 
 class CommonOptions():
     """This class defines the common options for: training, testing and running the TransferGAN networks.
@@ -35,6 +45,7 @@ class CommonOptions():
         parser.add_argument('--phase', type=str, default='train', help='Operating phase, train is first to be implemented') # test, validation and run are to be implemented
         parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
         parser.add_argument('--num_threads', default=4, type=int, help='# threads for loading data')
+        parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
 
         # network properties
         parser.add_argument('--input_nc', type=int, default=3, help='Number of input channels') # not limited to 1 or 3, but free
@@ -71,6 +82,16 @@ class CommonOptions():
 
         # get the basic options
         opt, _ = parser.parse_known_args()
+        # modify model-related parser options
+        model_name = opt.model
+        model_option_setter = models.get_option_setter(model_name)
+        parser = model_option_setter(parser, self.isTrain)
+        opt, _ = parser.parse_known_args()  # parse again with new defaults
+
+        # modify dataset-related parser options
+        dataset_name = opt.dataset_mode
+        dataset_option_setter = data.get_option_setter(dataset_name)
+        parser = dataset_option_setter(parser, self.isTrain)
         
         # save and return the parser
         self.parser = parser
@@ -92,14 +113,36 @@ class CommonOptions():
                 comment = '\t[default: %s]' % str(default)
             message += '{:>25}: {:<30}{}\n'.format(str(key), str(value), comment)
         message += '------------- End -------------'
-        print(message)
+        print(message)\
+        
+        # save to the disk
+        expr_dir = os.path.join(opt.checkpoints_dir, opt.name)
+        util.mkdirs(expr_dir)
+        file_name = os.path.join(expr_dir, '{}_opt.txt'.format(opt.phase))
+        with open(file_name, 'wt') as opt_file:
+            opt_file.write(message)
+            opt_file.write('\n')
 
     def parse(self):
         """Parse options and setup"""
         opt = self.gather_options()
         opt.isTrain = self.isTrain      # train or run
+        # process opt.suffix
+        if opt.suffix:
+            suffix = ('_' + opt.suffix.format(**vars(opt))) if opt.suffix != '' else ''
+            opt.name = opt.name + suffix
 
         self.print_options(opt)
+
+        # set gpu ids
+        str_ids = opt.gpu_ids.split(',')
+        opt.gpu_ids = []
+        for str_id in str_ids:
+            id = int(str_id)
+            if id >= 0:
+                opt.gpu_ids.append(id)
+        if len(opt.gpu_ids) > 0:
+            torch.cuda.set_device(opt.gpu_ids[0])
 
         self.opt = opt
 
