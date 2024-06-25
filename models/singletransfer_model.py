@@ -7,7 +7,7 @@ from .base_model import BaseModel
 from . import networks
 
 
-class TransferModel(BaseModel):
+class SingleTransferModel(BaseModel):
     """ This class implements the Transfer model, for learning a mapping from input images to output images given paired data.
 
     The design is based on the pix2pix-model from pix2pix paper: https://arxiv.org/pdf/1611.07004.pdf

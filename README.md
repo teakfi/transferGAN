@@ -8,3 +8,5 @@ This work is done for [Muon-Solutions Oy](http://muon-solutions.com/). The compa
 
 # Thanks
 As the codebase grows it will be easy to recognize familirities with the official pytorch implementation of [pix2pix and cycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix), which is at minimum an inspiration for this code.
+After some work I realized that [BicycleGAN](https://github.com/junyanz/BicycleGAN) would have been the best starting point, which has the multimodality implemented.
+The HDF5 loader is based on this posting in [Pytorch forum](https://discuss.pytorch.org/t/dataloader-when-num-worker-0-there-is-bug/25643/16?fbclid=IwAR2jFrRkKXv4PL9urrZeiHT_a3eEn7eZDWjUaQ-zcLP6BRtMO7e0nMgwlKU)
