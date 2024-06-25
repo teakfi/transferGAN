@@ -32,10 +32,21 @@ class TrainOptions(CommonOptions):
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
         parser.add_argument('--update_freq_D', type=int, default=1, help='how many iterations of data between updating discriminator')
         parser.add_argument('--update_freq_G', type=int, default=1, help='how many iterations of data between updating generator')
-        parser.add_argument('--beta1D', type=float, default=0.5, help='momentum term of adam')
-        parser.add_argument('--lrD', type=float, default=0.0002, help='initial learning rate for adam')
-        parser.add_argument('--beta1G', type=float, default=0.5, help='momentum term of adam')
-        parser.add_argument('--lrG', type=float, default=0.0002, help='initial learning rate for adam')
+        parser.add_argument('--beta1D', type=float, default=0.5, help='momentum term of adam for discirminator (1)')
+        parser.add_argument('--lrD', type=float, default=0.0002, help='initial learning rate for adam, discriminator (1)')
+        parser.add_argument('--beta1G', type=float, default=0.5, help='momentum term of adam for generator')
+        parser.add_argument('--lrG', type=float, default=0.0002, help='initial learning rate for adam, generator')
+        parser.add_argument('--beta1D2', type=float, default=0.5, help='momentum term of adam for discriminator 2') 
+        parser.add_argument('--lrD2', type=float, default=0.0002, help='initial learning rate for adam, discriminator 2')
+        parser.add_argument('--beta1E', type=float, default=0.5, help='momentum term of adam for encoder')
+        parser.add_argument('--lrE', type=float, default=0.0002, help='initial learning rate for adam, encoder')
+        parser.add_argument('--lambda_L1', type=float, default=10.0, help='weight for |B-G(A, E(B))|')  # bicycleGAN
+        parser.add_argument('--lambda_GAN', type=float, default=1.0, help='weight on D loss. D(G(A, E(B)))')  # bicycleGAN
+        parser.add_argument('--lambda_GAN2', type=float, default=1.0, help='weight on D2 loss, D(G(A, random_z))')  # bicycleGAN
+        parser.add_argument('--lambda_z', type=float, default=0.5, help='weight for ||E(G(random_z)) - random_z||')  # bicycleGAN
+        parser.add_argument('--lambda_kl', type=float, default=0.01, help='weight for KL loss')  # bicycleGAN
+        parser.add_argument('--use_same_D', action='store_true', help='if two Ds share the weights or not')     # bicycleGAN    
+         
         self.isTrain = True
         return parser
     
