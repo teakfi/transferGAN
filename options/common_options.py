@@ -51,7 +51,7 @@ class CommonOptions():
         # network properties
         parser.add_argument('--input_nc', type=int, default=3, help='Number of input channels') # not limited to 1 or 3, but free, except hdf5 currently grayscale
         parser.add_argument('--output_nc', type=int, default=3, help='Number of output channels') # not limited to 1 or 3, but free, except hdf5 currently grayscale
-        parser.add_argument('--model', type=str, default='transfer', help='chooses which model to use. [singletransfer | pix2pix | bicycle]') # other models from pix2pix/cyclegan/bicycle may appear later
+        parser.add_argument('--model', type=str, default='transfer', help='chooses which model to use. [singletransfer | pix2pix | bicycle_gan]') # other models from pix2pix/cyclegan/bicycle may appear later
         parser.add_argument('--nz', type=int, default=50, help='#latent vector') # increased to 50 from 8 in BicycleGAN as more freedom in muon data
         parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in the last conv layer')
         parser.add_argument('--nef', type=int, default=64, help='# of encoder filters in the first conv layer')
@@ -66,8 +66,10 @@ class CommonOptions():
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
         parser.add_argument('--num_Ds', type=int, default=2, help='number of Discrminators')  # bicycleGAN
-
- 
+        parser.add_argument('--nl', type=str, default='relu', help='non-linearity activation: relu | lrelu | elu')   #bicycleGAN
+        parser.add_argument('--where_add', type=str, default='all', help='input|all|middle; where to add z in the network G') #bicycleGAN
+        parser.add_argument('--conditional_D', action='store_true', help='if use conditional GAN for D') #bicycleGAN        
+        parser.add_argument('--upsample', type=str, default='basic', help='basic | bilinear') #bicycleGAN 
 
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')
