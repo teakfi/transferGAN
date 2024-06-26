@@ -7,7 +7,7 @@ The data is sparse with only few pixels activated in an 256x256 grid both in bef
 
 The code has now HDF5 input file support.
 The data in HDF5 file is supposed to be in root of the file in datasets named: testdata, traindata, rundata, or valdata. At the moment only training is implemented in the code set, so only traindata is being used.
-The datasets are in format array(index,width,height)=32bit float from 0 to 1, meaning grayscale. Each array has before and after -(image)values, stacked either next to each other or above each other, the default is before on the left and after on the right so the width is double of the single image.
+The datasets are in a following format: array(index,width,height)=32bit float from 0 to 1, meaning grayscale. Each array has before and after -(image)values, stacked either next to each other or above each other, the default is before on the left and after on the right so the width is double of the single image.
 
 # Code ownership
 This work is done for [Muon-Solutions Oy](http://muon-solutions.com/). The company owns all rights to the code and has agreed to publish it under GPL-3 license.

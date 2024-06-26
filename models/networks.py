@@ -406,7 +406,7 @@ class GANLoss(nn.Module):
         else:
             return self.__call_single__(predictions,target_is_real)
 
-#End bicycleGAN
+ 
 
 
 
