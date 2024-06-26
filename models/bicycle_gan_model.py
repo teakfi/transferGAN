@@ -51,7 +51,7 @@ class BiCycleGANModel(BaseModel):
                                           init_type=opt.init_type, init_gain=opt.init_gain, gpu_ids=self.gpu_ids, vaeLike=use_vae)
 
         if opt.isTrain:
-            self.criterionGAN = networks.BGANLoss(gan_mode=opt.gan_mode).to(self.device)
+            self.criterionGAN = networks.GANLoss(gan_mode=opt.gan_mode).to(self.device)
             self.criterionL1 = torch.nn.L1Loss()
             self.criterionZ = torch.nn.L1Loss()
             # initialize optimizers
