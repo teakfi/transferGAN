@@ -929,9 +929,9 @@ class PixelDiscriminator(nn.Module):
 
 # bicycleGAN networks
 
-def conv3x3(in_planes, out_planes):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=1,
-                     padding=1, bias=True)
+#def conv3x3(in_planes, out_planes):
+#   return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=1,
+#                     padding=1, bias=True)
 
 
 # two usage cases, depend on kw and padw
@@ -953,7 +953,7 @@ def meanpoolConv(inplanes, outplanes):
 
 def convMeanpool(inplanes, outplanes):
     sequence = []
-    sequence += [conv3x3(inplanes, outplanes)]
+    sequence += [nn.Conv2d(inplanes, outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
     sequence += [nn.AvgPool2d(kernel_size=2, stride=2)]
     return nn.Sequential(*sequence)
 
@@ -968,7 +968,7 @@ class BasicBlockUp(nn.Module):
         layers += [upsampleConv(inplanes, outplanes, kw=3, padw=1)]
         if norm_layer is not None:
             layers += [norm_layer(outplanes)]
-        layers += [conv3x3(outplanes, outplanes)]
+        layers += [nn.Conv2d(outplanes, outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
         self.conv = nn.Sequential(*layers)
         self.shortcut = upsampleConv(inplanes, outplanes, kw=1, padw=0)
 
@@ -984,7 +984,7 @@ class BasicBlock(nn.Module):
         if norm_layer is not None:
             layers += [norm_layer(inplanes)]
         layers += [nl_layer()]
-        layers += [conv3x3(inplanes, inplanes)]
+        layers += [nn.Conv2d(inplanes, inplanes,kernel_size=3,stride=1,padding=1,bias=True)]
         if norm_layer is not None:
             layers += [norm_layer(inplanes)]
         layers += [nl_layer()]

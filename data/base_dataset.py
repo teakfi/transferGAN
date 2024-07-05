@@ -115,7 +115,7 @@ def get_transform(opt, params=None, method=transforms.InterpolationMode.BICUBIC,
         else:
             values = []
             for i in range(1,opt.input_nc+1):
-                values.append(0,5)
+                values.append(0.5)
             
             transform_list += [transforms.Normalize(tuple(values), tuple(values))]
 
