@@ -929,30 +929,6 @@ class PixelDiscriminator(nn.Module):
 
 # bicycleGAN networks
 
-
-class BasicBlockUp(nn.Module):
-    def __init__(self, inplanes, outplanes, norm_layer=None, nl_layer=None):
-        super(BasicBlockUp, self).__init__()
-        layers = []
-        if norm_layer is not None:
-            layers += [norm_layer(inplanes)]
-        layers += [nl_layer()]
-        layers += [nn.Upsample(scale_factor=2, mode='nearest')]
-        layers += [nn.Conv2d(inplanes,outplanes,kernel_size=3,stride=2,padding=1,bias=True)]
-        if norm_layer is not None:
-            layers += [norm_layer(outplanes)]
-        layers += [nn.Conv2d(outplanes, outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
-        self.conv = nn.Sequential(*layers)
-        shortcut = []
-        shortcut += [nn.Upsample(scale_factor=2, mode='nearest')]
-        shortcut += [nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0, bias=True)]
-        self.shortcut = nn.Sequential(*shortcut)
-
-    def forward(self, x):
-        out = self.conv(x) + self.shortcut(x)
-        return out
-
-
 class BasicBlock(nn.Module):
     def __init__(self, inplanes, outplanes, norm_layer=None, nl_layer=None):
         super(BasicBlock, self).__init__()
