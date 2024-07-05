@@ -602,15 +602,15 @@ class G_Unet_add_input(nn.Module):
 
         return self.model(x_with_z)
 
-def upsampleLayer(inplanes, outplanes, upsample='basic', padding_type='zero'):
+def upsampleLayer(inplanes, outplanes, upsample='basic', padding_type='zero', use_bias=True):
     # padding_type = 'zero'
     if upsample == 'basic':
         upconv = [nn.ConvTranspose2d(
-            inplanes, outplanes, kernel_size=4, stride=2, padding=1)]
+            inplanes, outplanes, kernel_size=4, stride=2, padding=1,bias=use_bias)]
     elif upsample == 'bilinear':
         upconv = [nn.Upsample(scale_factor=2, mode='bilinear'),
                   nn.ReflectionPad2d(1),
-                  nn.Conv2d(inplanes, outplanes, kernel_size=3, stride=1, padding=0)]
+                  nn.Conv2d(inplanes, outplanes, kernel_size=3, stride=1, padding=0,bias=use_bias)]
     else:
         raise NotImplementedError(
             'upsample layer [%s] not implemented' % upsample)
@@ -960,6 +960,10 @@ class UnetBlock_with_z(nn.Module):
                  norm_layer=None, nl_layer=None, use_dropout=False, upsample='basic', padding_type='zero'):
         super(UnetBlock_with_z, self).__init__()
         p = 0
+        if type(norm_layer) == functools.partial:
+            use_bias = norm_layer.func == nn.InstanceNorm2d
+        else:
+            use_bias = norm_layer == nn.InstanceNorm2d
         downconv = []
         if padding_type == 'reflect':
             downconv += [nn.ReflectionPad2d(1)]
@@ -976,26 +980,26 @@ class UnetBlock_with_z(nn.Module):
         self.nz = nz
         input_nc = input_nc + nz
         downconv += [nn.Conv2d(input_nc, inner_nc,
-                               kernel_size=4, stride=2, padding=p)]
+                               kernel_size=4, stride=2, padding=p,bias=use_bias)]
         # downsample is different from upsample
         downrelu = nn.LeakyReLU(0.2, True)
         uprelu = nl_layer()
 
         if outermost:
             upconv = upsampleLayer(
-                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type)
+                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type,use_bias=use_bias)
             down = downconv
             up = [uprelu] + upconv + [nn.Tanh()]
         elif innermost:
             upconv = upsampleLayer(
-                inner_nc, outer_nc, upsample=upsample, padding_type=padding_type)
+                inner_nc, outer_nc, upsample=upsample, padding_type=padding_type,use_bias=use_bias)
             down = [downrelu] + downconv
             up = [uprelu] + upconv
             if norm_layer is not None:
                 up += [norm_layer(outer_nc)]
         else:
             upconv = upsampleLayer(
-                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type)
+                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type,use_bias=use_bias)
             down = [downrelu] + downconv
             if norm_layer is not None:
                 down += [norm_layer(inner_nc)]
