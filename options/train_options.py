@@ -27,8 +27,8 @@ class TrainOptions(CommonOptions):
         # insert options here with reasonable grouping
         parser.add_argument('--n_epochs', type=int, default=100, help='number of epochs with the initial learning rate')
         parser.add_argument('--n_epochs_decay', type=int, default=100, help='number of epochs to linearly decay learning rate to zero')
-        parser.add_argument('--gan_mode', type=str, default='lsgan', help='the type of GAN objective. [vanilla| lsgan ]. vanilla GAN loss is the cross-entropy objective used in the original GAN paper.') # wgan-gp not incorporated
-        parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
+        parser.add_argument('--gan_mode', type=str, default='lsgan', choices=['vanilla','lsgan'],help='the type of GAN objective. [vanilla| lsgan ]. vanilla GAN loss is the cross-entropy objective used in the original GAN paper.') # wgan-gp not incorporated
+        parser.add_argument('--lr_policy', type=str, default='linear',choices=['linear','step','plateau','cosine'], help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
         parser.add_argument('--update_freq_D', type=int, default=1, help='how many iterations of data between updating discriminator')
         parser.add_argument('--update_freq_G', type=int, default=1, help='how many iterations of data between updating generator')
