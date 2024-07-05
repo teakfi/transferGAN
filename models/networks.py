@@ -929,19 +929,7 @@ class PixelDiscriminator(nn.Module):
 
 # bicycleGAN networks
 
-#def conv3x3(in_planes, out_planes):
-#   return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=1,
-#                     padding=1, bias=True)
-
-
-# two usage cases, depend on kw and padw
-def upsampleConv(inplanes, outplanes, kw, padw):
-    sequence = []
-    sequence += [nn.Upsample(scale_factor=2, mode='nearest')]
-    sequence += [nn.Conv2d(inplanes, outplanes, kernel_size=kw,
-                           stride=1, padding=padw, bias=True)]
-    return nn.Sequential(*sequence)
-
+ 
 
 def meanpoolConv(inplanes, outplanes):
     sequence = []
@@ -965,12 +953,16 @@ class BasicBlockUp(nn.Module):
         if norm_layer is not None:
             layers += [norm_layer(inplanes)]
         layers += [nl_layer()]
-        layers += [upsampleConv(inplanes, outplanes, kw=3, padw=1)]
+        layers += [nn.Upsample(scale_factor=2, mode='nearest')]
+        layers += [nn.Conv2d(inplanes,outplanes,kernel_size=3,stride=2,padding=1,bias=True)]
         if norm_layer is not None:
             layers += [norm_layer(outplanes)]
         layers += [nn.Conv2d(outplanes, outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
         self.conv = nn.Sequential(*layers)
-        self.shortcut = upsampleConv(inplanes, outplanes, kw=1, padw=0)
+        shortcut = []
+        shortcut += [nn.Upsample(scale_factor=2, mode='nearest')]
+        shortcut += [nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0, bias=True)]
+        self.shortcut = nn.Sequential(*shortcut)
 
     def forward(self, x):
         out = self.conv(x) + self.shortcut(x)
