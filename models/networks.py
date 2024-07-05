@@ -929,22 +929,6 @@ class PixelDiscriminator(nn.Module):
 
 # bicycleGAN networks
 
- 
-
-def meanpoolConv(inplanes, outplanes):
-    sequence = []
-    sequence += [nn.AvgPool2d(kernel_size=2, stride=2)]
-    sequence += [nn.Conv2d(inplanes, outplanes,
-                           kernel_size=1, stride=1, padding=0, bias=True)]
-    return nn.Sequential(*sequence)
-
-
-def convMeanpool(inplanes, outplanes):
-    sequence = []
-    sequence += [nn.Conv2d(inplanes, outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
-    sequence += [nn.AvgPool2d(kernel_size=2, stride=2)]
-    return nn.Sequential(*sequence)
-
 
 class BasicBlockUp(nn.Module):
     def __init__(self, inplanes, outplanes, norm_layer=None, nl_layer=None):
@@ -980,9 +964,13 @@ class BasicBlock(nn.Module):
         if norm_layer is not None:
             layers += [norm_layer(inplanes)]
         layers += [nl_layer()]
-        layers += [convMeanpool(inplanes, outplanes)]
+        layers += [nn.Conv2d(inplanes,outplanes,kernel_size=3,stride=1,padding=1,bias=True)]
+        layers += [nn.AvgPool2d(kernel_size=2,stride=2)]
         self.conv = nn.Sequential(*layers)
-        self.shortcut = meanpoolConv(inplanes, outplanes)
+        shortcut = []
+        shortcut += [nn.AvgPool2d(kernel_size=2, stride=2)]
+        shortcut += [nn.Conv2d(inplanes,outplanes,kernel_size=1, stride=1, padding=0,bias=True)]
+        self.shortcut = nn.Sequential(*shortcut)
 
     def forward(self, x):
         out = self.conv(x) + self.shortcut(x)
