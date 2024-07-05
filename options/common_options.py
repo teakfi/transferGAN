@@ -67,7 +67,7 @@ class CommonOptions():
         parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
         parser.add_argument('--num_Ds', type=int, default=2, help='number of Discrminators')  # bicycleGAN
         parser.add_argument('--nl', type=str, default='relu', choices=['relu','lrelu','elu'],help='non-linearity activation: relu | lrelu | elu')   #bicycleGAN
-        parser.add_argument('--where_add', type=str, default='all', help='input|all|middle; where to add z in the network G') #bicycleGAN
+        parser.add_argument('--where_add', type=str, default='all',choices=['input','all'], help='input|all; where to add z in the network G') #bicycleGAN
         parser.add_argument('--conditional_D', action='store_true', help='if use conditional GAN for D') #bicycleGAN        
         parser.add_argument('--upsample', type=str, default='basic',choices=['basic','bilinear'], help='basic | bilinear') #bicycleGAN 
 

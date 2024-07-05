@@ -576,18 +576,18 @@ class G_Unet_add_input(nn.Module):
         self.nz = nz
         max_nchn = 8
         # construct unet structure
-        unet_block = UnetBlock(ngf * max_nchn, ngf * max_nchn, ngf * max_nchn,
+        unet_block = UnetBlock_with_z(ngf * max_nchn, ngf * max_nchn, ngf * max_nchn, nz=0,
                                innermost=True, norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
         for i in range(num_downs - 5):
-            unet_block = UnetBlock(ngf * max_nchn, ngf * max_nchn, ngf * max_nchn, unet_block,
+            unet_block = UnetBlock_with_z(ngf * max_nchn, ngf * max_nchn, ngf * max_nchn,nz=0, submodule=unet_block,
                                    norm_layer=norm_layer, nl_layer=nl_layer, use_dropout=use_dropout, upsample=upsample)
-        unet_block = UnetBlock(ngf * 4, ngf * 4, ngf * max_nchn, unet_block,
+        unet_block = UnetBlock_with_z(ngf * 4, ngf * 4, ngf * max_nchn,nz=0,  submodule=unet_block,
                                norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
-        unet_block = UnetBlock(ngf * 2, ngf * 2, ngf * 4, unet_block,
+        unet_block = UnetBlock_with_z(ngf * 2, ngf * 2, ngf * 4,nz=0,  submodule=unet_block,
                                norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
-        unet_block = UnetBlock(ngf, ngf, ngf * 2, unet_block,
+        unet_block = UnetBlock_with_z(ngf, ngf, ngf * 2, nz=0, submodule=unet_block,
                                norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
-        unet_block = UnetBlock(input_nc + nz, output_nc, ngf, unet_block,
+        unet_block = UnetBlock_with_z(input_nc + nz, output_nc, ngf,nz=0,  submodule=unet_block,
                                outermost=True, norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
 
         self.model = unet_block
@@ -616,68 +616,7 @@ def upsampleLayer(inplanes, outplanes, upsample='basic', padding_type='zero'):
             'upsample layer [%s] not implemented' % upsample)
     return upconv
 
-class UnetBlock(nn.Module):
-    def __init__(self, input_nc, outer_nc, inner_nc,
-                 submodule=None, outermost=False, innermost=False,
-                 norm_layer=None, nl_layer=None, use_dropout=False, upsample='basic', padding_type='zero'):
-        super(UnetBlock, self).__init__()
-        self.outermost = outermost
-        p = 0
-        downconv = []
-        if padding_type == 'reflect':
-            downconv += [nn.ReflectionPad2d(1)]
-        elif padding_type == 'replicate':
-            downconv += [nn.ReplicationPad2d(1)]
-        elif padding_type == 'zero':
-            p = 1
-        else:
-            raise NotImplementedError(
-                'padding [%s] is not implemented' % padding_type)
-        downconv += [nn.Conv2d(input_nc, inner_nc,
-                               kernel_size=4, stride=2, padding=p)]
-        # downsample is different from upsample
-        downrelu = nn.LeakyReLU(0.2, True)
-        downnorm = norm_layer(inner_nc) if norm_layer is not None else None
-        uprelu = nl_layer()
-        upnorm = norm_layer(outer_nc) if norm_layer is not None else None
-
-        if outermost:
-            upconv = upsampleLayer(
-                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type)
-            down = downconv
-            up = [uprelu] + upconv + [nn.Tanh()]
-            model = down + [submodule] + up
-        elif innermost:
-            upconv = upsampleLayer(
-                inner_nc, outer_nc, upsample=upsample, padding_type=padding_type)
-            down = [downrelu] + downconv
-            up = [uprelu] + upconv
-            if upnorm is not None:
-                up += [upnorm]
-            model = down + up
-        else:
-            upconv = upsampleLayer(
-                inner_nc * 2, outer_nc, upsample=upsample, padding_type=padding_type)
-            down = [downrelu] + downconv
-            if downnorm is not None:
-                down += [downnorm]
-            up = [uprelu] + upconv
-            if upnorm is not None:
-                up += [upnorm]
-
-            if use_dropout:
-                model = down + [submodule] + up + [nn.Dropout(0.5)]
-            else:
-                model = down + [submodule] + up
-
-        self.model = nn.Sequential(*model)
-
-    def forward(self, x):
-        if self.outermost:
-            return self.model(x)
-        else:
-            return torch.cat([self.model(x), x], 1)
-
+ 
 # end bicyclegan stuff
 
 
@@ -1071,7 +1010,7 @@ class UnetBlock_with_z(nn.Module):
         self.submodule = submodule
         self.up = nn.Sequential(*up)
 
-    def forward(self, x, z):
+    def forward(self, x, z=None):
         # print(x.size())
         if self.nz > 0:
             z_img = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), x.size(2), x.size(3))
