@@ -11,6 +11,7 @@ The datasets are in a following format: array(index,width,height)=32bit float fr
 
 # Code ownership
 This work is done for [Muon-Solutions Oy](http://muon-solutions.com/). The company owns all rights to the code and has agreed to publish it under GPL-3 license.
+Parts of the code are from BicycleGAN and pytorch-CycleGAN-and-pix2pix and those are owned by their authors.
 
 # Thanks
 As the codebase grows it will be easy to recognize familirities with the official pytorch implementation of [pix2pix and cycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix), which is at minimum an inspiration for this code.
